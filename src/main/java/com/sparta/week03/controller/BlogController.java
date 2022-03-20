@@ -24,11 +24,11 @@ public class BlogController {
         return blog;
     }
 
-    @GetMapping("detail")
-    public String detail(Model model){
-        model.addAllAttributes("data","hello");
-        return "detail";
-    }
+//    @GetMapping("/hello") // "/hello"를 입력하면 method가 호출됨
+//    public String hello(Model model) {
+//        model.addAttribute("data","hello!!");
+//        return "hellsadsadsao";
+//    }
 
 
     @GetMapping("/api/blogs")
@@ -37,8 +37,11 @@ public class BlogController {
     }
 
     @GetMapping("/api/blogs/{id}")
-    public Optional<Blog> readDetail(@PathVariable Long id){
-        return blogRepository.findById(id);
+    public Blog readDetail(@PathVariable Long id){
+        Blog blog = blogRepository.findById(id).orElseThrow(
+                ()->new NullPointerException()
+        );
+        return blog;
     }
 
 

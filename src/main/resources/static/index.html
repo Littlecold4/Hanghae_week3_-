@@ -145,6 +145,67 @@
             text-align: left;
             color: #868e96;
         }
+        #modal.modal-overlay {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(1.5px);
+            -webkit-backdrop-filter: blur(1.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        #modal .modal-window {
+            background: rgba( 69, 139, 197, 0.70 );
+            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+            backdrop-filter: blur( 13.5px );
+            -webkit-backdrop-filter: blur( 13.5px );
+            border-radius: 10px;
+            border: 1px solid rgba( 255, 255, 255, 0.18 );
+            width: 400px;
+            height: 500px;
+            position: relative;
+            top: -100px;
+            padding: 10px;
+        }
+        #modal .title {
+            padding-left: 10px;
+            display: inline;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+        #modal .username{
+            padding-left: 10px;
+            display: inline;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+            font-size: 15px;
+        }
+        #modal .title h2 {
+            display: inline;
+        }
+        #modal .close-area {
+            display: inline;
+            float: right;
+            padding-right: 10px;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
+
+        #modal .content {
+            margin-top: 20px;
+            padding: 0px 10px;
+            text-shadow: 1px 1px 2px gray;
+            color: white;
+        }
 
         .card {
             width: 538px;
@@ -242,8 +303,6 @@
         }
 
 
-
-
     </style>
     <script>
         // 미리 작성된 영역 - 수정하지 않으셔도 됩니다.
@@ -323,41 +382,56 @@
             $.ajax({
                 type: "GET",
                 url: "/api/blogs",
-                success: function (response){
-                    for(let i=0; i<response.length; i++){
+                success: function (response) {
+                    for (let i = 0; i < response.length; i++) {
                         let blog = response[i];
-                        let id =blog.id;
+                        let id = blog.id;
                         let username = blog.username;
                         let title = blog.title;
                         let contents = blog.contents;
-                        let modifiedAt =blog.modifiedAt;
-                        addHTML(id,title,username,contents,modifiedAt);
+                        let modifiedAt = blog.modifiedAt;
+                        addHTML(id, title, username, contents, modifiedAt);
 
                     }
                 }
             })
         }
 
-        function showdetail(){
-            console.log("hi");
-            // $.ajax({
-            //     type: "GET",
-            //     url: "/api/blogs/{id}",
-            //     success: function (response){
-            //         let blog = response;
-            //         let id =blog.id;
-            //         let username = blog.username;
-            //         let title = blog.title;
-            //         let contents = blog.contents;
-            //         let modifiedAt =blog.modifiedAt;
-            //         console.log(username);
-            //     }
-            // })
+        function showdetail(id) {
+            $.ajax({
+                type: "GET",
+                url: "/api/blogs/" + id,
+                success: function (response) {
+                    let blog = response;
+                    let id = blog.id;
+                    let username = blog.username;
+                    let title = blog.title;
+                    let contents = blog.contents;
+                    let modifiedAt = blog.modifiedAt;
+                    let temp_html=`<div id="modal" class="modal-overlay">
+                                    <div class="modal-window">
+                                    <div class="close-area" onclick="modal.remove()">X</div>
+                                        <div class="title">
+                                            <h1>제목: ${title}</h1>
+                                        </div>
+                                        <div class="username">
+                                            <p>작성자 : ${username} / 작성날짜 : ${modifiedAt}</p>
+                                        </div>
+
+                                        <div class="content">
+                                        <h3>내용</h3>
+                                            <p>${contents} </p>
+                                        </div>
+                                    </div>
+                                </div>`
+                    $('#wrap').append(temp_html);
+                }
+            })
         }
 
         // 메모 하나를 HTML로 만들어서 body 태그 내 원하는 곳에 붙입니다.
         function addHTML(id, title, username, contents, modifiedAt) {
-            let temp_html =`<div class="card" onclick="window.location.href='/${id}/detail'">
+            let temp_html = `<div class="card" style="cursor: pointer" onclick="showdetail(${id})">
                                 <!-- date/username 영역 -->
                                 <div class="title">
                                     ${title}
@@ -391,21 +465,21 @@
             let title = $('#contents_title').val();
             let contents = $('#contents_contents').val();
             // 2. 작성한 메모가 올바른지 isValidContents 함수를 통해 확인합니다.
-            if(isValidContents(username) ==false){
+            if (isValidContents(username) == false) {
                 alert("이름을 입력하세요");
                 return;
             }
-            if(isValidContents(title) ==false){
+            if (isValidContents(title) == false) {
                 alert("제목을 입력하세요");
                 return;
             }
-            if(isValidContents(contents) ==false){
+            if (isValidContents(contents) == false) {
                 alert("내용을 입력하세요");
                 return;
             }
             // 3. genRandomName 함수를 통해 익명의 username을 만듭니다.
             // 4. 전달할 data JSON으로 만듭니다.
-            let data ={'title':title,'username':username ,'contents':contents};
+            let data = {'title': title, 'username': username, 'contents': contents};
             // 5. POST /api/memos 에 data를 전달합니다.
             $.ajax({
                 type: "POST",
@@ -433,7 +507,7 @@
 <div class="background-body">
 
 </div>
-<div class="wrap">
+<div class="wrap" id="wrap">
     <div class="header">
         <h2>Minwoo's blog</h2>
         <p>
