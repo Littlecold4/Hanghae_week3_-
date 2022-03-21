@@ -7,7 +7,9 @@ import com.sparta.week03.domain.BlogRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +19,7 @@ public class BlogController {
     private final BlogRepository blogRepository;
     private final BlogService blogService;
 
+
     @PostMapping("/api/blogs")
     public Blog createBlog(@RequestBody BlogRequestDto requestDto) {
         Blog blog = new Blog(requestDto);
@@ -24,17 +27,37 @@ public class BlogController {
         return blog;
     }
 
-//    @GetMapping("/hello") // "/hello"를 입력하면 method가 호출됨
-//    public String hello(Model model) {
-//        model.addAttribute("data","hello!!");
-//        return "hellsadsadsao";
-//    }
 
 
     @GetMapping("/api/blogs")
     public List<Blog> readBlog() {
         return blogRepository.findAllByOrderByModifiedAtDesc();
     }
+
+//    @GetMapping("/datail/{id}")
+//    public ModelAndView readDetail3(@PathVariable Long id){
+//        Blog blog = blogRepository.findById(id).orElseThrow(
+//                ()->new NullPointerException()
+//        );
+//        ModelAndView mav = new ModelAndView();
+//        mav.addObject("response",blog);
+//        return mav;
+//    }
+
+//@GetMapping("/datail")
+//    public ModelAndView readDetail3(){
+//        ModelAndView mav = new ModelAndView();
+//        mav.setViewName("detail.html");
+//        return mav;
+//    }
+
+//    @GetMapping("/detail/{id}")
+//    public Blog readDetail2(@PathVariable Long id){
+//        Blog blog = blogRepository.findById(id).orElseThrow(
+//                ()->new NullPointerException()
+//        );
+//        return blog;
+//    }
 
     @GetMapping("/api/blogs/{id}")
     public Blog readDetail(@PathVariable Long id){
@@ -45,17 +68,10 @@ public class BlogController {
     }
 
 
-
-
     @DeleteMapping("/api/blogs/{id}")
     public Long deleteBlog(@PathVariable Long id) {
         blogRepository.deleteById(id);
         return id;
-    }
-
-    @GetMapping("/detail")
-    public String home(){
-        return "detail.html";
     }
 
 
@@ -65,4 +81,5 @@ public class BlogController {
         return id;
     }
 }
+
 
