@@ -27,6 +27,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.6.3'
+    implementation  'org.owasp.antisamy:antisamy:1.5.10'
+    implementation group: 'com.navercorp.lucy', name: 'lucy-xss-servlet', version: '2.0.0'
 }
 
 tasks.named('test') {

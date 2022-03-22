@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class pageController {
 
     private final BlogRepository blogRepository;
-    private final BlogService blogService;
 
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable Long id,Model model){
